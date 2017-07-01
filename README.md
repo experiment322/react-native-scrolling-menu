@@ -1,45 +1,32 @@
 # React Native Scrolling Menu
-> A horizontal scrolling menu for React Native.
+> A horizontal scrolling menu/picker for React Native.
 
-[![npm version](https://badge.fury.io/js/react-native-scrolling-menu.svg)](https://badge.fury.io/js/react-native-scrolling-menu)
-
-![Screenshot](https://drive.google.com/uc?export=view&id=0BwAfqxmTWrImakRNWTBZZklBNmc)
+This is a fork. Click [here](https://github.com/ccm-innovation/react-native-scrolling-menu) for the original version.
 
 ## Installation
-`npm install --save react-native-scrolling-menu`
-
-## React Native
-```JavaScript
-var ScrollingMenu = require('react-native-scrolling-menu');
-```
+`npm install --save experiment322/react-native-scrolling-menu`
 
 ## Usage
 ```JavaScript
-let items = ['Menu Item 1','Menu Item 2','Menu Item 3','Menu Item 4','Menu Item 5'];
+import React from 'react';
+import ScrollingMenu from 'react-native-scrolling-menu';
 
-onClick(itemIndex) {
-  console.log("Selected: " + items[itemIndex]);
-}
+const items = ['Menu Item 1','Menu Item 2','Menu Item 3','Menu Item 4','Menu Item 5'];
 
-render() {
-  return (
-    <ScrollingMenu
-      items={items}
-      callback={this.onClick.bind(this)}
-      backgroundColor="#ffffff"
-      textColor="#cccccc"
-      selectedTextColor="#000000"
-      itemSpacing={20} />
-  );
+class Example extends React.Component {
+    render() {
+        return (
+          <ScrollingMenu items={items} onSelect={(index) => {console.log(items[index]);}}/>
+        );
+    } 
 }
 ```
 
 ## Props
 |Key |Type |Description |
 |--- |--- |--- |
-|`items`|Array|An array of items for the menu|
-|`callback`|Function(itemIndex)|The callback function sends the index of the menu item selected|
-|`backgroundColor`|String (HEX)|The background color of the menu|
-|`textColor`|String (HEX)|The text color prior to being selected|
-|`selectedTextColor`|String (HEX)|The text color of the selected item|
-|`itemSpacing`|Number|The number of pixels between the menu items|
+|`items`*|array of string/number|An array of items for the menu/picker|
+|`onSelect`*|function(index)|The function to be called with the index of the selected item|
+|`itemStyle`|text style|The style to be applied to every item|
+|`containerStyle`|view style|The style to be applied to the scroll container|
+|`selectedItemStyle`|text style|The style to be applied to the selected item|
