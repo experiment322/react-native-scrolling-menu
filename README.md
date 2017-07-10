@@ -28,5 +28,6 @@ class Example extends React.Component {
 |`items`*|array of string/number|An array of items for the menu/picker|
 |`onSelect`*|function(index)|The function to be called with the index of the selected item|
 |`itemStyle`|text style|The style to be applied to every item|
+|`defaultIndex`|number|The index of the default selected item. Triggers onSelect|
 |`containerStyle`|view style|The style to be applied to the scroll container|
 |`selectedItemStyle`|text style|The style to be applied to the selected item|

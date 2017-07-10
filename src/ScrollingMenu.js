@@ -6,6 +6,7 @@ export default class ScrollingMenu extends Component {
     items: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])).isRequired,
     onSelect: PropTypes.func.isRequired,
     itemStyle: Text.propTypes.style,
+    defaultIndex: PropTypes.number,
     containerStyle: View.propTypes.style,
     selectedItemStyle: Text.propTypes.style
   };
@@ -35,35 +36,47 @@ export default class ScrollingMenu extends Component {
     this.state = {
       widths: new Array(props.items.length),
       selected: null,
-      contentWidth: 0,
-      containerWidth: 0,
-      containerHeight: 0
+      contentWidth: null,
+      containerWidth: null
     };
   }
 
   scrollTo(itemNum) {
+    const {onSelect} = this.props;
+    const {selected, widths, contentWidth, containerWidth} = this.state;
     window.requestAnimationFrame(() => {
-      const {onSelect} = this.props;
-      const {widths, containerWidth, contentWidth} = this.state;
-
       const t = widths.slice(0, itemNum).reduce((sum, val) => sum + val, 0) + widths[itemNum] / 2 - containerWidth / 2;
-      const x = Math.max(Math.min(t, contentWidth - containerWidth), 0);
-
-      this.setState({selected: itemNum});
-      this.scrollView.scrollTo({x});
-      onSelect(itemNum);
+      this.scrollView.scrollTo({
+        x: Math.max(Math.min(t, contentWidth - containerWidth), 0)
+      });
+      if (selected !== itemNum) {
+        this.setState({selected: itemNum});
+        onSelect(itemNum);
+      }
     });
   }
 
+  componentDidUpdate() {
+    const {widths, selected} = this.state;
+    const {items, defaultIndex} = this.props;
+    const calculatedWidths = widths.filter((item, i) => (i in widths));
+    if (!(selected in items) && defaultIndex in items && calculatedWidths.length === widths.length) {
+      this.scrollTo(defaultIndex);
+    }
+  }
+
   render() {
-    const {widths, selected, containerHeight: lineHeight} = this.state;
+    const {widths, selected} = this.state;
     const {items, itemStyle, containerStyle, selectedItemStyle} = this.props;
     const content = items.map((item, i) => (
-      <TouchableOpacity key={i} onPress={() => this.scrollTo(i)}>
-        <Text style={[{lineHeight}, itemStyle, selected === i && selectedItemStyle]}
-              onLayout={({nativeEvent: {layout: {width}}}) => {
-                widths[i] = width;
-                this.setState({widths});
+      <TouchableOpacity key={i}
+                        onPress={() => {
+                          this.scrollTo(i);
+                        }}>
+        <Text style={selected === i ? selectedItemStyle : itemStyle}
+              onLayout={({nativeEvent}) => {
+                widths[i] = nativeEvent.layout.width;
+                this.forceUpdate();
               }}>
           {item}
         </Text>
@@ -71,14 +84,19 @@ export default class ScrollingMenu extends Component {
     ));
     return (
       <View style={containerStyle}
-            onLayout={({nativeEvent: {layout: {width, height}}}) => this.setState({
-              containerWidth: width,
-              containerHeight: height
-            })}>
-        <ScrollView ref={r => this.scrollView = r}
-                    horizontal={true}
-                    onContentSizeChange={contentWidth => this.setState({contentWidth})}
-                    showsHorizontalScrollIndicator={false}>
+            onLayout={({nativeEvent}) => {
+              this.setState({
+                containerWidth: nativeEvent.layout.width
+              });
+            }}>
+        <ScrollView horizontal={true}
+                    showsHorizontalScrollIndicator={false}
+                    ref={r => {
+                      this.scrollView = r;
+                    }}
+                    onContentSizeChange={contentWidth => {
+                      this.setState({contentWidth});
+                    }}>
           {content}
         </ScrollView>
       </View>
