@@ -1,7 +1,7 @@
-import React, {Component, PropTypes} from 'react';
+import React, {PureComponent, PropTypes} from 'react';
 import {View, Text, ScrollView, TouchableOpacity} from 'react-native';
 
-export default class ScrollingMenu extends Component {
+export default class ScrollingMenu extends PureComponent {
   static propTypes = {
     items: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])).isRequired,
     onSelect: PropTypes.func.isRequired,
@@ -39,31 +39,38 @@ export default class ScrollingMenu extends Component {
       contentWidth: null,
       containerWidth: null
     };
+    this.selectedDefaultItem = false;
+  }
+
+  select(itemNum) {
+    const {onSelect} = this.props;
+    window.requestAnimationFrame(() => {
+      this.setState({selected: itemNum});
+      onSelect(itemNum);
+    });
   }
 
   scrollTo(itemNum) {
-    const {onSelect} = this.props;
-    const {selected, widths, contentWidth, containerWidth} = this.state;
+    const {widths, contentWidth, containerWidth} = this.state;
     window.requestAnimationFrame(() => {
-      const t = widths.slice(0, itemNum).reduce((sum, val) => sum + val, 0) + widths[itemNum] / 2 - containerWidth / 2;
-      this.scrollView.scrollTo({
-        x: Math.max(Math.min(t, contentWidth - containerWidth), 0)
-      });
-      if (selected !== itemNum) {
-        this.setState({selected: itemNum});
-        onSelect(itemNum);
-      }
+      const widthBefore = widths.slice(0, itemNum).reduce((sum, val) => sum + val, 0);
+      const itemCenter = widthBefore + widths[itemNum] / 2 - containerWidth / 2;
+      const x = Math.max(Math.min(itemCenter, contentWidth - containerWidth), 0);
+      this.scrollView.scrollTo({x, animated: true});
     });
   }
 
   componentDidUpdate() {
     const {widths, selected} = this.state;
     const {items, defaultIndex} = this.props;
-    if (!(selected in items) && defaultIndex in items) {
+    if (selected === null) {
       const calculatedWidths = widths.filter((item, i) => (i in widths));
-      if (calculatedWidths.length === widths.length) {
-        this.scrollTo(defaultIndex);
+      if (calculatedWidths.length === widths.length && defaultIndex in items && !this.selectedDefaultItem) {
+        this.selectedDefaultItem = true;
+        this.select(defaultIndex);
       }
+    } else {
+      this.scrollTo(selected);
     }
   }
 
@@ -72,13 +79,15 @@ export default class ScrollingMenu extends Component {
     const {items, itemStyle, containerStyle, selectedItemStyle} = this.props;
     const content = items.map((item, i) => (
       <TouchableOpacity key={i}
+                        disabled={selected === i}
                         onPress={() => {
-                          this.scrollTo(i);
+                          this.select(i);
                         }}>
         <Text style={selected === i ? selectedItemStyle : itemStyle}
               onLayout={({nativeEvent}) => {
-                widths[i] = nativeEvent.layout.width;
-                this.forceUpdate();
+                const newWidths = widths.slice(0);
+                newWidths[i] = nativeEvent.layout.width;
+                this.setState({widths: newWidths});
               }}>
           {item}
         </Text>
