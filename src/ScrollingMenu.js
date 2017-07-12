@@ -59,9 +59,11 @@ export default class ScrollingMenu extends Component {
   componentDidUpdate() {
     const {widths, selected} = this.state;
     const {items, defaultIndex} = this.props;
-    const calculatedWidths = widths.filter((item, i) => (i in widths));
-    if (!(selected in items) && defaultIndex in items && calculatedWidths.length === widths.length) {
-      this.scrollTo(defaultIndex);
+    if (!(selected in items) && defaultIndex in items) {
+      const calculatedWidths = widths.filter((item, i) => (i in widths));
+      if (calculatedWidths.length === widths.length) {
+        this.scrollTo(defaultIndex);
+      }
     }
   }
 
