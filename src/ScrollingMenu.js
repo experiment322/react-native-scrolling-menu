@@ -11,14 +11,13 @@ export default class ScrollingMenu extends PureComponent {
       contentWidth: null,
       containerWidth: null
     }
-    this.scrollDelay = 64
-    this.scrollTimeout = null
   }
 
   select (itemNum) {
     const {onSelect} = this.props
-    this.setState({selected: itemNum})
     window.requestAnimationFrame(() => { onSelect(itemNum) })
+    this.setState({selected: itemNum})
+    this.scrollTo(itemNum)
   }
 
   scrollTo (itemNum) {
@@ -36,14 +35,9 @@ export default class ScrollingMenu extends PureComponent {
         const calculatedLayouts = layouts.filter((item, i) => i in layouts)
         if (calculatedLayouts.length === layouts.length) this.select(defaultIndex)
       }
-    } else if (prevState.layouts !== layouts || prevState.selected !== selected) {
-      clearTimeout(this.scrollTimeout)
-      this.scrollTimeout = setTimeout(() => { this.scrollTo(selected) }, this.scrollDelay)
+    } else if (prevState.layouts[selected] !== layouts[selected]) {
+      this.scrollTo(selected)
     }
-  }
-
-  componentWillUnmount () {
-    clearTimeout(this.scrollTimeout)
   }
 
   render () {
