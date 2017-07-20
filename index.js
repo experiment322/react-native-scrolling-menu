@@ -1,3 +1,3 @@
-import ScrollingMenu from './src/ScrollingMenu';
+import ScrollingMenu from './src/ScrollingMenu'
 
-export default ScrollingMenu;
+export default ScrollingMenu
