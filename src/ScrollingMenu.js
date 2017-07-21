@@ -28,12 +28,14 @@ export default class ScrollingMenu extends PureComponent {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const {layouts, selected} = this.state
     const {items, defaultIndex} = this.props
+    const {layouts, selected, contentWidth, containerWidth} = this.state
     if (selected === null) {
       if (defaultIndex in items) {
-        const calculatedLayouts = layouts.filter((item, i) => i in layouts)
-        if (calculatedLayouts.length === layouts.length) this.select(defaultIndex)
+        const computedLayouts = layouts.filter((item, i) => i in layouts)
+        if (containerWidth !== null && contentWidth !== null && computedLayouts.length === layouts.length) {
+          this.select(defaultIndex)
+        }
       }
     } else if (prevState.layouts[selected] !== layouts[selected]) {
       this.scrollTo(selected)
@@ -89,7 +91,7 @@ ScrollingMenu.defaultProps = {
     color: 'black',
     height: '100%',
     opacity: 0.5,
-    paddingHorizontal: 20
+    paddingHorizontal: 16
   },
   containerStyle: {
     width: '100%',
@@ -100,6 +102,6 @@ ScrollingMenu.defaultProps = {
     color: 'black',
     height: '100%',
     opacity: 1,
-    paddingHorizontal: 20
+    paddingHorizontal: 16
   }
 }
