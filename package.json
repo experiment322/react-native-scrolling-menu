@@ -1,36 +1,36 @@
 {
   "name": "react-native-scrolling-menu",
-  "version": "1.4.1",
   "description": "A horizontal scrolling menu/picker for React Native.",
-  "main": "index.js",
+  "version": "1.4.2",
   "author": "Michael Hirsch <michael@hirsch.me>",
-  "contributors": [
-    "Alexandru Damian Manea <maneaalexdamian@gmail.com>"
-  ],
-  "license": "GPL-3.0",
-  "keywords": [
-    "react",
-    "react-native",
-    "navbar",
-    "navigation",
-    "menu",
-    "tabs",
-    "picker",
-    "horizontal",
-    "scrolling"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/experiment322/react-native-scrolling-menu.git"
-  },
   "bugs": {
     "url": "https://github.com/experiment322/react-native-scrolling-menu/issues"
   },
-  "homepage": "https://github.com/experiment322/react-native-scrolling-menu",
+  "contributors": [
+    "Alexandru Damian Manea <maneaalexdamian@gmail.com>"
+  ],
+  "dependencies": {
+    "prop-types": "^15.5.10"
+  },
   "devDependencies": {
     "standard": "^10.0.2"
   },
-  "dependencies": {
-    "prop-types": "^15.5.10"
+  "homepage": "https://github.com/experiment322/react-native-scrolling-menu",
+  "keywords": [
+    "horizontal",
+    "menu",
+    "navbar",
+    "navigation",
+    "picker",
+    "react",
+    "react-native",
+    "scrolling",
+    "tabs"
+  ],
+  "license": "GPL-3.0",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/experiment322/react-native-scrolling-menu.git"
   }
 }

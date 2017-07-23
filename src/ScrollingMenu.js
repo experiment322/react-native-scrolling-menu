@@ -22,30 +22,26 @@ export default class ScrollingMenu extends PureComponent {
 
   scrollTo (itemNum) {
     const {layouts, contentWidth, containerWidth} = this.state
-    const itemCenter = layouts[itemNum].x + layouts[itemNum].width / 2 - containerWidth / 2
-    const x = Math.max(Math.min(itemCenter, contentWidth - containerWidth), 0)
-    this.scrollView.scrollTo({x})
+    const offset = layouts[itemNum].x + layouts[itemNum].width / 2 - containerWidth / 2
+    this.scrollView.scrollTo({x: Math.max(0, Math.min(offset, contentWidth - containerWidth))})
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const {items, defaultIndex} = this.props
+    const {defaultIndex} = this.props
     const {layouts, selected, contentWidth, containerWidth} = this.state
     if (selected === null) {
-      if (defaultIndex in items) {
-        const computedLayouts = layouts.filter((item, i) => i in layouts)
-        if (containerWidth !== null && contentWidth !== null && computedLayouts.length === layouts.length) {
-          this.select(defaultIndex)
-        }
+      if (defaultIndex in layouts && containerWidth && contentWidth) {
+        this.select(defaultIndex)
       }
     } else if (prevState.layouts[selected] !== layouts[selected]) {
       this.scrollTo(selected)
     }
   }
 
-  render () {
+  renderItems () {
     const {layouts, selected} = this.state
-    const {items, itemStyle, containerStyle, selectedItemStyle} = this.props
-    const content = items.map((item, i) => (
+    const {items, itemStyle, selectedItemStyle} = this.props
+    return items.map((item, i) => (
       <TouchableOpacity
         key={i}
         disabled={selected === i}
@@ -59,6 +55,10 @@ export default class ScrollingMenu extends PureComponent {
         </Text>
       </TouchableOpacity>
     ))
+  }
+
+  render () {
+    const {containerStyle} = this.props
     return (
       <View
         style={containerStyle}
@@ -70,7 +70,7 @@ export default class ScrollingMenu extends PureComponent {
           ref={r => { this.scrollView = r }}
           onContentSizeChange={contentWidth => { this.setState({contentWidth}) }}
         >
-          {content}
+          {this.renderItems()}
         </ScrollView>
       </View>
     )
@@ -80,10 +80,10 @@ export default class ScrollingMenu extends PureComponent {
 ScrollingMenu.propTypes = {
   items: PropTypes.arrayOf(PropTypes.oneOfType([PropTypes.string, PropTypes.number])).isRequired,
   onSelect: PropTypes.func.isRequired,
-  itemStyle: Text.propTypes.style,
+  itemStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.object]),
   defaultIndex: PropTypes.number,
-  containerStyle: View.propTypes.style,
-  selectedItemStyle: Text.propTypes.style
+  containerStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.object]),
+  selectedItemStyle: PropTypes.oneOfType([PropTypes.array, PropTypes.number, PropTypes.object])
 }
 
 ScrollingMenu.defaultProps = {
