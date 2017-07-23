@@ -2,6 +2,7 @@
 > A horizontal scrolling menu/picker for React Native.
 
 This is a fork. Click [here](https://github.com/ccm-innovation/react-native-scrolling-menu) for the original version.
+![Demo GIF](http://i.imgur.com/w0Xa4Ry.gif)
 
 ## Installation
 `npm install --save experiment322/react-native-scrolling-menu`
